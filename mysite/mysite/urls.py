@@ -22,6 +22,4 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('labOne/', include('labOne.urls')),
     path('main/', include('tamplates.urls')),
-    path('mplimage.png/a=(?P<rate>[0-9]+)', labOne.views.mplimage),
-    path('mplimage.png', labOne.views.mplimage),
 ]
