@@ -10,32 +10,92 @@ from django import forms
 from sympy import diff, symbols
 
 class UserForm(forms.Form):
-    a = forms.FloatField(label="Введіть a:", widget=forms.NumberInput(attrs={'class': 'form-control'}), initial=0)
-    b = forms.FloatField(label="Введіть b:", widget=forms.NumberInput(attrs={'class': 'form-control'}), initial=1)
-    e = forms.FloatField(label="Введіть крок:", widget=forms.NumberInput(attrs={'class': 'form-control'}), initial=0.01)
-
+    CHOICES = ((1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6),)
+    formA = forms.ChoiceField(choices=CHOICES)
 def forms(request):
     userform = UserForm()
-    return render(request, 'labOne/forms.html', {"form": userform})
-def func(x):
-    return np.power(x, 4) + 2 * np.power(x, 3) - x - 1
+    return render(request, 'task2/forms.html', {"form": userform})
+def postS(postSave):
+    global a
+    global b
+    global c
+    global d
+    global e
+    global I
+    a = 0
+    b = 0
+    c = 0
+    d = 0
+    e = 0
+    I = 0
+    if postSave == 1:
+        I = 11
+        a = 0.2
+        b = 97
+        c = 88
+        d = 350
+        e = 112
+    if postSave == 2:
+        I = 15
+        a = 2.3
+        b = 150
+        c = 120
+        d = 457
+        e = 97
+    if postSave == 3:
+        I = 22
+        a = 112
+        b = 215
+        c = 110
+        d = 465
+        e = 149
+    if postSave == 4:
+        I = 25
+        a = 32
+        b = 67
+        c = 275
+        d = 84
+        e = 52
+    if postSave == 5:
+        I = 32
+        a = 39
+        b = 140
+        c = 97
+        d = 192
+        e = 76
+    if postSave == 6:
+        I = 47
+        a = 15
+        b = 22
+        c = 217
+        d = 118
+        e = 56
+def func(u):
+    f = (a*u+b*u**2+c*u**3+d*u**4+e*u**5)-I
+    return f
+def funcg(u):
+    f = (a*u+b*u**2+c*u**3+d*u**4+e*u**5)-I
+    return f
+
 def mplimage(request):
     if 1:
-        a = float(request.POST['a'])
-        b = float(request.POST['b'])
-        e = float(request.POST['e'])
+        postSave = float(request.POST['formA'])
+        postS(postSave)
+        l = 0
+        lmax = 0.6
+        E = 1e-4
         y=0.0
-        i=a
+        iu=0
         f = plt.figure(1)
         ax = SubplotZero(f, 111)
         f.add_subplot(ax)
-        mas = np.arange(a, b, e)
-
+        mas = np.arange(l, lmax, E)
         for i in mas:
             y1=func(i)
-            y2=func(i+e)
+            y2=func(i+E)
             if y1*y2<0:
-                y = (i + i+e)/2
+                iu = (i+i+E)/2
+                break
 
         for direction in ["xzero", "yzero"]:
             # adds arrows at the ends of each axis
@@ -47,37 +107,42 @@ def mplimage(request):
         for direction in ["left", "right", "bottom", "top"]:
             # hides borders
             ax.axis[direction].set_visible(False)
-        x = np.linspace(a, b, 100)
-        ax.plot(y, func(y), 'o', x, func(x))
-        print(y)
+        x = np.linspace(l, lmax, 100)
+        ax.plot(iu, funcg(iu), 'o', x, funcg(x))
+        print(iu)
+        print(y1)
+        print(y2)
+        print(I)
     buf = io.BytesIO()
     plt.grid(True)
     plt.savefig(buf, format='svg')
     plt.close(f)
     response = HttpResponse(buf.getvalue(), content_type='image/svg+xml')
     return response
+
 def dyhotomia(request):
     if 1:
-        a = float(request.POST['a'])
-        b = float(request.POST['b'])
-        e = float(request.POST['e'])
+        postSave = float(request.POST['formA'])
+        postS(postSave)
+        l = 0.0
+        lmax = 0.6
+        E = 1e-4
         y=0.0
-        i=a
         f = plt.figure(1)
         ax = SubplotZero(f, 111)
         f.add_subplot(ax)
-        mas = np.arange(a, b, e)
-        x = a
-        xmax = b
-
-        while(np.abs(a - b)>=e):
-            Ua = func(a)
-            U = func((a+b)/2)
+        x = l
+        xmax = lmax
+        Ua = 0.0
+        U = 0.0
+        while(np.abs(l - lmax)>=E):
+            Ua = func(l)
+            U = func((l+lmax)/2)
             if Ua*U > 0:
-                a = (a+b)/2
+                l = (l+lmax)/2
             else:
-                b = (a+b)/2
-            y = (a+b)/2
+                lmax = (l+lmax)/2
+            y = (l+lmax)/2
 
         for direction in ["xzero", "yzero"]:
             # adds arrows at the ends of each axis
@@ -90,8 +155,12 @@ def dyhotomia(request):
             # hides borders
             ax.axis[direction].set_visible(False)
         x = np.linspace(x, xmax, 100)
-        ax.plot(y, func(y), 'o', x, func(x))
+        ax.plot(y, funcg(y), 'o', x, funcg(x))
         print(y)
+        print(Ua)
+        print(U)
+        print(I)
+        print(a)
 
     buf = io.BytesIO()
     plt.grid(True)
@@ -99,30 +168,31 @@ def dyhotomia(request):
     plt.close(f)
     response = HttpResponse(buf.getvalue(), content_type='image/svg+xml')
     return response
-def dFunc(x):
-    dx = symbols("x")
-    return diff(np.power(dx, 4) + 2 * np.power(dx, 3) - dx - 1).subs(dx, x)
-def d2Func(x):
-    dx = symbols("x")
-    return diff(np.power(dx, 4) + 2 * np.power(dx, 3) - dx - 1, dx, 2 ).subs(dx, x)
+
+def dFunc(u):
+    du = symbols("u")
+    return diff((a*du+b*du**2+c*du**3+d*du**4+e*du**5)-I).subs(du, u)
+def d2Func(u):
+    du = symbols("u")
+    return diff((a*du+b*du**2+c*du**3+d*du**4+e*du**5)-I, du, 2 ).subs(du, u)
 
 def newton(request):
     if 1:
-        a = float(request.POST['a'])
-        b = float(request.POST['b'])
-        e = float(request.POST['e'])
-        y=0.0
-        i=a
+        postSave = float(request.POST['formA'])
+        postS(postSave)
+        l = 0.0
+        lmax = 0.6
+        E = 1e-4
         f = plt.figure(1)
         ax = SubplotZero(f, 111)
         f.add_subplot(ax)
-        x = a
-        xmax = b
-        if(func(a)*d2Func(a) > 0):
-            x0 = a
-        else: x0 = b
+        x = l
+        xmax = lmax
+        if(func(l)*d2Func(l) > 0):
+            x0 = l
+        else: x0 = lmax
         xn = x0 - func(x0) / dFunc(x0)
-        while(np.abs(x0 - xn) > e):
+        while(np.abs(x0 - xn) > E):
             x0 = xn
             xn = x0 - func(x0) / dFunc(x0)
 
@@ -137,8 +207,8 @@ def newton(request):
             # hides borders
             ax.axis[direction].set_visible(False)
         x = np.linspace(x, xmax, 100)
-        ax.plot(xn, func(xn), 'o', x, func(x))
-        print(xn)
+        ax.plot(xn, funcg(xn), 'o', x, funcg(x))
+        print("newton",xn)
 
     buf = io.BytesIO()
     plt.grid(True)
@@ -146,4 +216,3 @@ def newton(request):
     plt.close(f)
     response = HttpResponse(buf.getvalue(), content_type='image/svg+xml')
     return response
-# Create your views here.
