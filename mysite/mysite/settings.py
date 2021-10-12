@@ -31,7 +31,9 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'tamplates',
+    'firstsite',
+    'task3',
+    'task2',
     'labOne',
     'django.contrib.admin',
     'django.contrib.auth',

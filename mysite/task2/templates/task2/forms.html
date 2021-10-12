@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Курсова робота</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+<body>
+<div><a href="http://127.0.0.1:8000/">Назад</a></div>
+<div class="container-fluid mt-5">
+    <div class="row">
+         <div class="col-4">
+            <form action="/task2/mplimage/" method="POST" target="iframe1">
+                <fieldset>
+                    <legend>Метод ітерацій</legend>
+                        {% csrf_token %}
+                        <table>
+                        {{ form.as_table }}
+                        </table>
+                        <input type="submit" value="Send" class="btn btn-primary mb-5">
+                </fieldset>
+            </form>
+                <iframe src="http://127.0.0.1:8000/task2/mplimage/" name="iframe1" id="iframe1" width="100%" height="500px"></iframe>
+        </div>
+        <div class="col-4">
+                <form action="/task2/dyhotomia/" method="POST" target="iframe2">
+                    <fieldset>
+                        <legend>Метод дихотомії</legend>
+                            {% csrf_token %}
+                            <table>
+                            {{ form.as_table }}
+                            </table>
+                            <input type="submit" value="Send" class="btn btn-primary mb-5">
+                    </fieldset>
+                </form>
+                    <iframe src="http://127.0.0.1:8000/task2/dyhotomia/" name="iframe2" id="iframe2" width="100%" height="500px"></iframe>
+            </div>
+         <div class="col-4">
+                <form action="/task2/newton/" method="POST" target="iframe3">
+                    <fieldset>
+                        <legend>Метод Ньютона</legend>
+                            {% csrf_token %}
+                            <table>
+                            {{ form.as_table }}
+                            </table>
+                            <input type="submit" value="Send" class="btn btn-primary mb-5">
+                    </fieldset>
+                </form>
+                    <iframe src="http://127.0.0.1:8000/task2/newton/" name="iframe3" id="iframe3" width="100%" height="500px"></iframe>
+            </div>
+        </div>
+</div>
+</div>
+</body>
+</html>
